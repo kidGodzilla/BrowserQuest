@@ -13,7 +13,7 @@ define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
 
         loadJSON: function(data) {
             this.id = data.id;
-            this.filepath = "img/" + this.scale + "/" + this.id + ".png";
+            this.filepath = data.filepath || "img/" + this.scale + "/" + this.id + ".png";
             this.animationData = data.animations;
             this.width = data.width;
             this.height = data.height;
