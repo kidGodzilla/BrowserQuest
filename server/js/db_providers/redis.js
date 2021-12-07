@@ -3,7 +3,7 @@ var Utils = require('../utils');
 var cls = require("../lib/class"),
     Player = require('../player'),
     Messages = require("../message"),
-    redis = require("redis"),
+    redis = require("../../../local_modules/redis"),
     bcrypt = require("bcrypt");
 
 var client;
