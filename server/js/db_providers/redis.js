@@ -16,7 +16,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         this.client = client;
         // console.log('client', client, this.client);
     },
-    loadPlayer: async function(player){
+    loadPlayer: async function(player) {
         var self = this;
         var userKey = "u:" + player.name;
         var curTime = new Date().getTime();
@@ -24,8 +24,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
         var replies_1 = client.SMEMBERS('usr');
 
         // client.SMEMBERS("usr", function(err, replies){
-            for(var index = 0; index < replies_1.length; index++){
-                if(replies_1[index].toString() === player.name){
+            for (var index = 0; index < replies_1.length; index++) {
+                if (replies_1[index].toString() === player.name) {
                     const replies = await client.multi()
                         .HGET(userKey, "pw") // 0
                         .HGET(userKey, "armor") // 1
@@ -108,7 +108,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                             // Check Password
 
                             bcrypt.compare(player.pw, pw, function(err, res) {
-                                if(!res) {
+                                if (!res) {
                                     player.connection.sendUTF8("invalidlogin");
                                     player.connection.close("Wrong Password: " + player.name);
                                     return;
@@ -116,8 +116,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
 
                                 var d = new Date();
                                 var lastLoginTimeDate = new Date(lastLoginTime);
-                                if(lastLoginTimeDate.getDate() !== d.getDate()
-                                && pubPoint > 0){
+                                if (lastLoginTimeDate.getDate() !== d.getDate()
+                                && pubPoint > 0) {
                                   var targetInventoryNumber = -1;
                                   if(inventory[0] === "burger"){
                                     targetInventoryNumber = 0;
@@ -129,8 +129,8 @@ module.exports = DatabaseHandler = cls.Class.extend({
                                     targetInventoryNumber = 1;
                                   }
 
-                                  if(targetInventoryNumber >= 0){
-                                    if(pubPoint > 100){
+                                  if (targetInventoryNumber >= 0) {
+                                    if (pubPoint > 100) {
                                       pubPoint = 100;
                                     }
                                     inventory[targetInventoryNumber] = "burger";
@@ -146,21 +146,21 @@ module.exports = DatabaseHandler = cls.Class.extend({
                                 // Check Ban
                                 d.setDate(d.getDate() - d.getDay());
                                 d.setHours(0, 0, 0);
-                                if(lastLoginTime < d.getTime()){
+                                if (lastLoginTime < d.getTime()) {
                                     log.info(player.name + "ban is initialized.");
                                     bannedTime = 0;
                                     client.HSET("b:" + player.connection._connection.remoteAddress, "time", bannedTime);
                                 }
                                 client.HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime);
 
-                                if(player.name === pubTopName.toString()){
+                                if (player.name === pubTopName.toString()) {
                                     avatar = nextNewArmor;
                                 }
 
                                 var admin = null;
                                 var i = 0;
-                                for(i = 0; i < adminnames.length; i++){
-                                    if(adminnames[i] === player.name){
+                                for (i = 0; i < adminnames.length; i++) {
+                                    if (adminnames[i] === player.name) {
                                         admin = 1;
                                         log.info("Admin " + player.name + "login");
                                     }
@@ -229,47 +229,54 @@ module.exports = DatabaseHandler = cls.Class.extend({
         // });
     },
 
-    checkBan: async function(player){
-        client.SMEMBERS("ipban", function(err, replies){
-            for(var index = 0; index < replies.length; index++){
-                if(replies[index].toString() === player.connection._connection.remoteAddress){
-                    client.multi()
+    checkBan: async function(player) {
+        const replies_1 = await client.SMEMBERS("ipban"); // , function(err, replies){
+            for (var index = 0; index < replies_1.length; index++) {
+                if (replies_1[index].toString() === player.connection._connection.remoteAddress) {
+                    const replies = await client.multi()
                         .HGET("b:" + player.connection._connection.remoteAddress, "rtime")
                         .HGET("b:" + player.connection._connection.remoteAddress, "time")
-                        .exec(function(err, replies){
+                        .exec(); // function(err, replies){
                              var curTime = new Date();
                              var banEndTime = new Date(replies[0]*1);
                              log.info("curTime: " + curTime.toString());
                              log.info("banEndTime: " + banEndTime.toString());
-                             if(banEndTime.getTime() > curTime.getTime()){
+                             if (banEndTime.getTime() > curTime.getTime()) {
                                  player.connection.sendUTF8("ban");
                                  player.connection.close("IP Banned player: " + player.name + " " + player.connection._connection.remoteAddress);
                              }
-                        });
+                        // });
                     return;
                 }
             }
-        });
+        // });
     },
-    banPlayer: async function(adminPlayer, banPlayer, days){
-        client.SMEMBERS("adminname", function(err, replies){
-            for(var index = 0; index < replies.length; index++){
-                if(replies[index].toString() === adminPlayer.name){
+
+    banPlayer: async function(adminPlayer, banPlayer, days) {
+        const replies = await client.SMEMBERS("adminname"); // , function(err, replies) {
+            for (var index = 0; index < replies.length; index++) {
+                if (replies[index].toString() === adminPlayer.name) {
                     var curTime = (new Date()).getTime();
                     client.SADD("ipban", banPlayer.connection._connection.remoteAddress);
                     adminPlayer.server.pushBroadcast(new Messages.Chat(banPlayer, "/1 " + adminPlayer.name + "-- 밴 ->" + banPlayer.name + " " + days + "일"));
-                    setTimeout( function(){ banPlayer.connection.close("Added IP Banned player: " + banPlayer.name + " " + banPlayer.connection._connection.remoteAddress); }, 30000);
+
+                    setTimeout( function() {
+                        banPlayer.connection.close("Added IP Banned player: " + banPlayer.name + " " + banPlayer.connection._connection.remoteAddress);
+                    }, 30000);
+
                     client.HSET("b:" + banPlayer.connection._connection.remoteAddress, "rtime", (curTime+(days*24*60*60*1000)).toString());
+
                     log.info(adminPlayer.name + "-- BAN ->" + banPlayer.name + " to " + (new Date(curTime+(days*24*60*60*1000)).toString()));
                     return;
                 }
             }
-        });
+        // });
     },
+
     chatBan: async function(adminPlayer, targetPlayer) {
-        client.SMEMBERS("adminname", function(err, replies){
-            for(var index = 0; index < replies.length; index++){
-                if(replies[index].toString() === adminPlayer.name){
+        const replies = await client.SMEMBERS("adminname"); // , function(err, replies){
+            for (var index = 0; index < replies.length; index++) {
+                if (replies[index].toString() === adminPlayer.name) {
                     var curTime = (new Date()).getTime();
                     adminPlayer.server.pushBroadcast(new Messages.Chat(targetPlayer, "/1 " + adminPlayer.name + "-- 채금 ->" + targetPlayer.name + " 10분"));
                     targetPlayer.chatBanEndTime = curTime + (10*60*1000);
@@ -278,18 +285,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     return;
                 }
             }
-        });
+        // });
     },
-    newBanPlayer: async function(adminPlayer, banPlayer){
+
+    newBanPlayer: async function(adminPlayer, banPlayer) {
         log.debug("1");
-        if(adminPlayer.experience > 100000){
+        if (adminPlayer.experience > 100000) {
             log.debug("2");
-            client.HGET("b:" + adminPlayer.connection._connection.remoteAddress, "banUseTime", function(err, reply){
+            const reply = await client.HGET("b:" + adminPlayer.connection._connection.remoteAddress, "banUseTime"); // , function(err, reply){
                 log.debug("3");
                 var curTime = new Date();
                 log.debug("curTime: " + curTime.getTime());
                 log.debug("bannable Time: " + (reply*1) + 1000*60*60*24);
-                if(curTime.getTime() > (reply*1) + 1000*60*60*24){
+                if (curTime.getTime() > (reply*1) + 1000*60*60*24) {
                     log.debug("4");
                     banPlayer.bannedTime++;
                     var banMsg = "" + adminPlayer.name + "-- 밴 ->" + banPlayer.name + " " + banPlayer.bannedTime + "번째 " + (Math.pow(2,(banPlayer.bannedTime))/2) + "분";
@@ -297,14 +305,19 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     client.HSET("b:" + banPlayer.connection._connection.remoteAddress, "rtime", (curTime.getTime()+(Math.pow(2,(banPlayer.bannedTime))*500*60)).toString());
                     client.HSET("b:" + banPlayer.connection._connection.remoteAddress, "time", banPlayer.bannedTime.toString());
                     client.HSET("b:" + adminPlayer.connection._connection.remoteAddress, "banUseTime", curTime.getTime().toString());
-                    setTimeout( function(){ banPlayer.connection.close("Added IP Banned player: " + banPlayer.name + " " + banPlayer.connection._connection.remoteAddress); }, 30000);
+
+                    setTimeout( function() {
+                        banPlayer.connection.close("Added IP Banned player: " + banPlayer.name + " " + banPlayer.connection._connection.remoteAddress);
+                    }, 30000);
+
                     adminPlayer.server.pushBroadcast(new Messages.Chat(banPlayer, "/1 " + banMsg));
                     log.info(banMsg);
                 }
                 return;
-            });
+            // });
         }
     },
+
     banTerm: function(time){
         return Math.pow(2, time)*500*60;
     },
@@ -325,14 +338,14 @@ module.exports = DatabaseHandler = cls.Class.extend({
         client.HSET("u:" + name, "exp", exp);
     },
     setInventory: async function(name, itemKind, inventoryNumber, itemNumber){
-        if(itemKind){
+        if (itemKind) {
             client.HSET("u:" + name, "inventory" + inventoryNumber, Types.getKindAsString(itemKind));
             client.HSET("u:" + name, "inventory" + inventoryNumber + ":number", itemNumber);
-           log.info("SetInventory: " + name + ", "
+            log.info("SetInventory: " + name + ", "
                                      + Types.getKindAsString(itemKind) + ", "
                                      + inventoryNumber + ", "
                                      + itemNumber);
-        } else{
+        } else {
             this.makeEmptyInventory(name, inventoryNumber);
         }
     },
@@ -358,10 +371,11 @@ module.exports = DatabaseHandler = cls.Class.extend({
         client.HSET("u:" + name, "x", x);
         client.HSET("u:" + name, "y", y);
     },
+
     loadBoard: async function(player, command, number, replyNumber){
       log.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
-      if(command === 'view'){
-        client.multi()
+      if (command === 'view') {
+        var replies = async client.multi()
         .HGET('bo:free', number+':title')
         .HGET('bo:free', number+':content')
         .HGET('bo:free', number+':writer')
@@ -369,7 +383,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .SMEMBERS('bo:free:' + number + ':up')
         .SMEMBERS('bo:free:' + number + ':down')
         .HGET('bo:free', number+':time')
-        .exec(function(err, replies){
+        .exec(); // function(err, replies){
           var title = replies[0];
           var content = replies[1];
           var writer = replies[2];
@@ -386,9 +400,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
                        up,
                        down,
                        time]);
-        });
-      } else if(command === 'reply'){
-        client.multi()
+        // });
+      } else if (command === 'reply') {
+        var replies = await client.multi()
         .HGET('bo:free', number+':reply:'+replyNumber+':writer')
         .HGET('bo:free', number+':reply:'+replyNumber+':content')
         .SMEMBERS('bo:free:' + number+':reply:'+replyNumber+':up')
@@ -414,7 +428,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         .SMEMBERS('bo:free:' + number+':reply:'+(replyNumber+4)+':up')
         .SMEMBERS('bo:free:' + number+':reply:'+(replyNumber+4)+':down')
 
-        .exec(function(err, replies){
+        .exec(); // function(err, replies){
           player.send([Types.Messages.BOARD,
                        'reply',
                         replies[0],  replies[1],  replies[2].length, replies[3].length,
@@ -422,30 +436,30 @@ module.exports = DatabaseHandler = cls.Class.extend({
                         replies[8],  replies[9],  replies[10].length, replies[11].length,
                         replies[12], replies[13], replies[14].length, replies[15].length,
                         replies[16], replies[17], replies[18].length, replies[19].length]);
-        });
-      } else if(command === 'up'){
-        if(player.level >= 50){
+        // });
+      } else if (command === 'up') {
+        if (player.level >= 50) {
           client.SADD('bo:free:' + number + ':up', player.name);
         }
-      } else if(command === 'down'){
-        if(player.level >= 50){
+      } else if (command === 'down') {
+        if (player.level >= 50) {
           client.SADD('bo:free:' + number + ':down', player.name);
         }
-      } else if(command === 'replyup'){
-        if(player.level >= 50){
+      } else if (command === 'replyup') {
+        if (player.level >= 50) {
           client.SADD('bo:free:'+number+':reply:'+replyNumber+':up', player.name);
         }
-      } else if(command === 'replydown'){
-        if(player.level >= 50){
+      } else if (command === 'replydown') {
+        if (player.level >= 50) {
           client.SADD('bo:free:'+number+':reply:'+replyNumber+':down', player.name);
         }
-      } else if(command === 'list'){
-        client.HGET('bo:free', 'lastnum', function(err, reply){
+      } else if (command === 'list') {
+        var reply = await client.HGET('bo:free', 'lastnum'); // , function(err, reply){
           var lastnum = reply;
-          if(number > 0){
+          if (number > 0) {
             lastnum = number;
           }
-          client.multi()
+          var replies = await client.multi()
           .HGET('bo:free', lastnum +':title')
           .HGET('bo:free', (lastnum-1) +':title')
           .HGET('bo:free', (lastnum-2) +':title')
@@ -512,31 +526,32 @@ module.exports = DatabaseHandler = cls.Class.extend({
           .HGET('bo:free', (lastnum+8) + ':replynum')
           .HGET('bo:free', (lastnum+9) + ':replynum')
 
-          .exec(function(err, replies){
-            var i=0;
+          .exec(); // function(err, replies){
+            var i = 0;
             var msg = [Types.Messages.BOARD, 'list', lastnum];
 
-            for(i=0; i<30; i++){
+            for (i = 0; i < 30; i++) {
                 msg.push(replies[i]);
             }
-            for(i=30; i<50; i++){
+            for (i = 30; i < 50; i++) {
                 msg.push(replies[i].length);
             }
-            for(i=50; i<60; i++){
+            for (i = 50; i < 60; i++) {
                 msg.push(replies[i]);
             }
 
             player.send(msg);
-          });
-        });
+          // });
+        // });
       }
     },
-    writeBoard: async function(player, title, content){
+
+    writeBoard: async function(player, title, content) {
       log.info("Write Board: " + player.name + " " + title);
-      client.HINCRBY('bo:free', 'lastnum', 1, function(err, reply){
+      var reply = await client.HINCRBY('bo:free', 'lastnum', 1); // , function(err, reply){
         var curTime = new Date().getTime();
         var number = reply ? reply : 1;
-        client.multi()
+        var replies = await client.multi()
         .HSET('bo:free', number+':title', title)
         .HSET('bo:free', number+':content', content)
         .HSET('bo:free', number+':writer', player.name)
@@ -551,44 +566,46 @@ module.exports = DatabaseHandler = cls.Class.extend({
                      0,
                      0,
                      curTime]);
-      });
+      // });
     },
+
     writeReply: async function(player, content, number){
       log.info("Write Reply: " + player.name + " " + content + " " + number);
       var self = this;
-      client.HINCRBY('bo:free', number + ':replynum', 1, function(err, reply){
+      var reply = await client.HINCRBY('bo:free', number + ':replynum', 1); // , function(err, reply){
         var replyNum = reply ? reply : 1;
-        client.multi()
+        var replies = await client.multi()
         .HSET('bo:free', number+':reply:'+replyNum+':content', content)
         .HSET('bo:free', number+':reply:'+replyNum+':writer', player.name)
-        .exec(function(err, replies){
+        .exec(); // function(err, replies){
           player.send([Types.Messages.BOARD,
                        'reply',
                        player.name,
                        content]);
-        });
-      });
+        // });
+      // });
     },
+
     pushKungWord: async function(player, word){
       var server = player.server;
 
-      if(player === server.lastKungPlayer){ return; }
-      if(server.isAlreadyKung(word)){ return; }
-      if(!server.isRightKungWord(word)){ return; }
+      if (player === server.lastKungPlayer) return;
+      if (server.isAlreadyKung(word)) return;
+      if (!server.isRightKungWord(word)) return;
 
-      if(server.kungWords.length === 0){
-        client.SRANDMEMBER('dic', function(err, reply){
+      if (server.kungWords.length === 0) {
+        var reply = await client.SRANDMEMBER('dic'); // , function(err, reply) {
           var randWord = reply;
           server.pushKungWord(player, randWord);
-        });
-      } else{
-        client.SISMEMBER('dic', word, function(err, reply){
-          if(reply === 1){
+        // });
+      } else {
+        var reply = await client.SISMEMBER('dic', word); // , function(err, reply) {
+          if (reply === 1) {
             server.pushKungWord(player, word);
-          } else{
+          } else {
             player.send([Types.Messages.NOTIFY, word + "는 사전에 없습니다."]);
           }
-        });
+        // });
       }
     }
 });
