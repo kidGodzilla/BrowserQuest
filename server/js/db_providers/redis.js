@@ -16,7 +16,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         this.client = client;
         // console.log('client', client, this.client);
     },
-    loadPlayer: function(player){
+    loadPlayer: async function(player){
         var self = this;
         var userKey = "u:" + player.name;
         var curTime = new Date().getTime();
@@ -192,7 +192,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
     },
 
-    createPlayer: function(player) {
+    createPlayer: async function(player) {
         var userKey = "u:" + player.name;
         var curTime = new Date().getTime();
 
@@ -227,7 +227,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
     },
 
-    checkBan: function(player){
+    checkBan: async function(player){
         client.SMEMBERS("ipban", function(err, replies){
             for(var index = 0; index < replies.length; index++){
                 if(replies[index].toString() === player.connection._connection.remoteAddress){
@@ -249,7 +249,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             }
         });
     },
-    banPlayer: function(adminPlayer, banPlayer, days){
+    banPlayer: async function(adminPlayer, banPlayer, days){
         client.SMEMBERS("adminname", function(err, replies){
             for(var index = 0; index < replies.length; index++){
                 if(replies[index].toString() === adminPlayer.name){
@@ -264,7 +264,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             }
         });
     },
-    chatBan: function(adminPlayer, targetPlayer) {
+    chatBan: async function(adminPlayer, targetPlayer) {
         client.SMEMBERS("adminname", function(err, replies){
             for(var index = 0; index < replies.length; index++){
                 if(replies[index].toString() === adminPlayer.name){
@@ -278,7 +278,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             }
         });
     },
-    newBanPlayer: function(adminPlayer, banPlayer){
+    newBanPlayer: async function(adminPlayer, banPlayer){
         log.debug("1");
         if(adminPlayer.experience > 100000){
             log.debug("2");
@@ -306,23 +306,23 @@ module.exports = DatabaseHandler = cls.Class.extend({
     banTerm: function(time){
         return Math.pow(2, time)*500*60;
     },
-    equipArmor: function(name, armor){
+    equipArmor: async function(name, armor){
         log.info("Set Armor: " + name + " " + armor);
         client.HSET("u:" + name, "armor", armor);
     },
-    equipAvatar: function(name, armor){
+    equipAvatar: async function(name, armor){
         log.info("Set Avatar: " + name + " " + armor);
         client.HSET("u:" + name, "avatar", armor);
     },
-    equipWeapon: function(name, weapon){
+    equipWeapon: async function(name, weapon){
         log.info("Set Weapon: " + name + " " + weapon);
         client.HSET("u:" + name, "weapon", weapon);
     },
-    setExp: function(name, exp){
+    setExp: async function(name, exp){
         log.info("Set Exp: " + name + " " + exp);
         client.HSET("u:" + name, "exp", exp);
     },
-    setInventory: function(name, itemKind, inventoryNumber, itemNumber){
+    setInventory: async function(name, itemKind, inventoryNumber, itemNumber){
         if(itemKind){
             client.HSET("u:" + name, "inventory" + inventoryNumber, Types.getKindAsString(itemKind));
             client.HSET("u:" + name, "inventory" + inventoryNumber + ":number", itemNumber);
@@ -334,29 +334,29 @@ module.exports = DatabaseHandler = cls.Class.extend({
             this.makeEmptyInventory(name, inventoryNumber);
         }
     },
-    makeEmptyInventory: function(name, number){
+    makeEmptyInventory: async function(name, number){
         log.info("Empty Inventory: " + name + " " + number);
         client.HDEL("u:" + name, "inventory" + number);
         client.HDEL("u:" + name, "inventory" + number + ":number");
     },
-    foundAchievement: function(name, number){
+    foundAchievement: async function(name, number){
         log.info("Found Achievement: " + name + " " + number);
         client.HSET("u:" + name, "achievement" + number + ":found", "true");
     },
-    progressAchievement: function(name, number, progress){
+    progressAchievement: async function(name, number, progress){
         log.info("Progress Achievement: " + name + " " + number + " " + progress);
         client.HSET("u:" + name, "achievement" + number + ":progress", progress);
     },
-    setUsedPubPts: function(name, usedPubPts){
+    setUsedPubPts: async function(name, usedPubPts){
         log.info("Set Used Pub Points: " + name + " " + usedPubPts);
         client.HSET("u:" + name, "usedPubPts", usedPubPts);
     },
-    setCheckpoint: function(name, x, y){
+    setCheckpoint: async function(name, x, y){
         log.info("Set Check Point: " + name + " " + x + " " + y);
         client.HSET("u:" + name, "x", x);
         client.HSET("u:" + name, "y", y);
     },
-    loadBoard: function(player, command, number, replyNumber){
+    loadBoard: async function(player, command, number, replyNumber){
       log.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
       if(command === 'view'){
         client.multi()
@@ -529,7 +529,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
       }
     },
-    writeBoard: function(player, title, content){
+    writeBoard: async function(player, title, content){
       log.info("Write Board: " + player.name + " " + title);
       client.HINCRBY('bo:free', 'lastnum', 1, function(err, reply){
         var curTime = new Date().getTime();
@@ -551,7 +551,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                      curTime]);
       });
     },
-    writeReply: function(player, content, number){
+    writeReply: async function(player, content, number){
       log.info("Write Reply: " + player.name + " " + content + " " + number);
       var self = this;
       client.HINCRBY('bo:free', number + ':replynum', 1, function(err, reply){
@@ -567,7 +567,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
         });
       });
     },
-    pushKungWord: function(player, word){
+    pushKungWord: async function(player, word){
       var server = player.server;
 
       if(player === server.lastKungPlayer){ return; }
