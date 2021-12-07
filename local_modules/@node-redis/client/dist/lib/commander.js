@@ -69,7 +69,7 @@ function* encodeCommand(args) {
     yield `*${args.length}${DELIMITER}`;
     for (let arg of args) {
         arg = arg || '';
-        const byteLength = typeof arg === 'string' ? arg.length : Buffer.byteLength(arg);
+        const byteLength = Buffer.byteLength(typeof arg === 'string' ? arg : '');
         yield `$${byteLength.toString()}${DELIMITER}`;
         yield arg;
         yield DELIMITER;
