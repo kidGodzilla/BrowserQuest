@@ -21,10 +21,12 @@ module.exports = DatabaseHandler = cls.Class.extend({
         var userKey = "u:" + player.name;
         var curTime = new Date().getTime();
 
-        client.SMEMBERS("usr", function(err, replies){
-            for(var index = 0; index < replies.length; index++){
-                if(replies[index].toString() === player.name){
-                    client.multi()
+        var replies_1 = client.SMEMBERS('usr');
+
+        // client.SMEMBERS("usr", function(err, replies){
+            for(var index = 0; index < replies_1.length; index++){
+                if(replies_1[index].toString() === player.name){
+                    const replies = await client.multi()
                         .HGET(userKey, "pw") // 0
                         .HGET(userKey, "armor") // 1
                         .HGET(userKey, "weapon") // 2
@@ -61,7 +63,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                         .HGET(userKey, "achievement8:found") // 33
                         .HGET(userKey, "achievement8:progress") // 34
                         .HGET("cb:" + player.connection._connection.remoteAddress, "etime") // 35
-                        .exec(function(err, replies){
+                        .exec(); // function(err, replies){
                             var pw = replies[0];
                             var armor = replies[1];
                             var weapon = replies[2];
@@ -180,7 +182,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                                     x, y,
                                     chatBanEndTime);
                             });
-                    });
+                    // });
                     return;
                 }
             }
@@ -189,7 +191,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
             player.connection.sendUTF8("invalidlogin");
             player.connection.close("User does not exist: " + player.name);
             return;
-        });
+        // });
     },
 
     createPlayer: async function(player) {
@@ -197,15 +199,15 @@ module.exports = DatabaseHandler = cls.Class.extend({
         var curTime = new Date().getTime();
 
         // Check if username is taken
-        client.SISMEMBER('usr', player.name, function(err, reply) {
-            if(reply === 1) {
+        var reply = await client.SISMEMBER('usr', player.name); //, function(err, reply) {
+            if (reply === 1) {
                 player.connection.sendUTF8("userexists");
                 player.connection.close("Username not available: " + player.name);
                 return;
             } else {
                 // Add the player
-                client.multi()
-                    .sadd("usr", player.name)
+                const replies = client.multi()
+                    .SADD("usr", player.name)
                     .HSET(userKey, "pw", player.pw)
                     .HSET(userKey, "email", player.email)
                     .HSET(userKey, "armor", "clotharmor")
@@ -213,7 +215,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     .HSET(userKey, "weapon", "sword1")
                     .HSET(userKey, "exp", 0)
                     .HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime)
-                    .exec(function(err, replies){
+                    .exec(); // function(err, replies){
                         log.info("New User: " + player.name);
                         player.sendWelcome(
                             "clotharmor", "sword1", "clotharmor", "sword1", 0,
@@ -222,9 +224,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
                              [false, false, false, false, false, false],
                              [0, 0, 0, 0, 0, 0],
                              player.x, player.y, 0);
-                    });
+                    // });
             }
-        });
+        // });
     },
 
     checkBan: async function(player){
