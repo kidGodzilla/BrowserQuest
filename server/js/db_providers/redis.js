@@ -4,7 +4,7 @@ var cls = require("../lib/class"),
     Player = require('../player'),
     Messages = require("../message"),
     redis = require("../../../local_modules/redis"),
-    bcrypt = require("bcrypt");
+    bcrypt = require("bcryptjs");
 
 var client;
 
