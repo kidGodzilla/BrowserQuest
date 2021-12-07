@@ -9,7 +9,7 @@ var cls = require("../lib/class"),
 var client;
 
 module.exports = DatabaseHandler = cls.Class.extend({
-    init: async function(config){
+    init: async function(config) {
         // console.log('redis config', config);
         client = redis.createClient({ socket: { port: config.redis_port, host: config.redis_host, nodelay: true }, password: config.redis_password });
         await client.connect();
@@ -21,7 +21,9 @@ module.exports = DatabaseHandler = cls.Class.extend({
         var userKey = "u:" + player.name;
         var curTime = new Date().getTime();
 
-        var replies_1 = client.SMEMBERS('usr');
+        var replies_1 = await client.SMEMBERS('usr');
+
+        // console.log('replies_1', replies_1);
 
         // client.SMEMBERS("usr", function(err, replies){
             for (var index = 0; index < replies_1.length; index++) {
@@ -151,7 +153,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                                     bannedTime = 0;
                                     client.HSET("b:" + player.connection._connection.remoteAddress, "time", bannedTime);
                                 }
-                                client.HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime);
+                                client.HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime.toString());
 
                                 if (player.name === pubTopName.toString()) {
                                     avatar = nextNewArmor;
@@ -206,6 +208,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                 return;
             } else {
                 // Add the player
+                // console.log('player', player);
                 const replies = client.multi()
                     .SADD("usr", player.name)
                     .HSET(userKey, "pw", player.pw)
@@ -214,7 +217,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
                     .HSET(userKey, "avatar", "clotharmor")
                     .HSET(userKey, "weapon", "sword1")
                     .HSET(userKey, "exp", 0)
-                    .HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime)
+                    .HSET("b:" + player.connection._connection.remoteAddress, "loginTime", curTime.toString())
                     .exec(); // function(err, replies){
                         log.info("New User: " + player.name);
                         player.sendWelcome(
@@ -321,22 +324,27 @@ module.exports = DatabaseHandler = cls.Class.extend({
     banTerm: function(time){
         return Math.pow(2, time)*500*60;
     },
+
     equipArmor: async function(name, armor){
         log.info("Set Armor: " + name + " " + armor);
         client.HSET("u:" + name, "armor", armor);
     },
+
     equipAvatar: async function(name, armor){
         log.info("Set Avatar: " + name + " " + armor);
         client.HSET("u:" + name, "avatar", armor);
     },
+
     equipWeapon: async function(name, weapon){
         log.info("Set Weapon: " + name + " " + weapon);
         client.HSET("u:" + name, "weapon", weapon);
     },
+
     setExp: async function(name, exp){
         log.info("Set Exp: " + name + " " + exp);
-        client.HSET("u:" + name, "exp", exp);
+        client.HSET("u:" + name, "exp", exp.toString());
     },
+
     setInventory: async function(name, itemKind, inventoryNumber, itemNumber){
         if (itemKind) {
             client.HSET("u:" + name, "inventory" + inventoryNumber, Types.getKindAsString(itemKind));
@@ -349,30 +357,35 @@ module.exports = DatabaseHandler = cls.Class.extend({
             this.makeEmptyInventory(name, inventoryNumber);
         }
     },
+
     makeEmptyInventory: async function(name, number){
         log.info("Empty Inventory: " + name + " " + number);
         client.HDEL("u:" + name, "inventory" + number);
         client.HDEL("u:" + name, "inventory" + number + ":number");
     },
+
     foundAchievement: async function(name, number){
         log.info("Found Achievement: " + name + " " + number);
         client.HSET("u:" + name, "achievement" + number + ":found", "true");
     },
+
     progressAchievement: async function(name, number, progress){
         log.info("Progress Achievement: " + name + " " + number + " " + progress);
-        client.HSET("u:" + name, "achievement" + number + ":progress", progress);
+        client.HSET("u:" + name, "achievement" + number + ":progress", progress.toString());
     },
+
     setUsedPubPts: async function(name, usedPubPts){
         log.info("Set Used Pub Points: " + name + " " + usedPubPts);
         client.HSET("u:" + name, "usedPubPts", usedPubPts);
     },
+
     setCheckpoint: async function(name, x, y){
         log.info("Set Check Point: " + name + " " + x + " " + y);
-        client.HSET("u:" + name, "x", x);
-        client.HSET("u:" + name, "y", y);
+        client.HSET("u:" + name, "x", x.toString());
+        client.HSET("u:" + name, "y", y.toString());
     },
 
-    loadBoard: async function(player, command, number, replyNumber){
+    loadBoard: async function(player, command, number, replyNumber) {
       log.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
       if (command === 'view') {
         var replies = await client.multi()
