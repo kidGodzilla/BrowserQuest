@@ -375,7 +375,7 @@ module.exports = DatabaseHandler = cls.Class.extend({
     loadBoard: async function(player, command, number, replyNumber){
       log.info("Load Board: " + player.name + " " + command + " " + number + " " + replyNumber);
       if (command === 'view') {
-        var replies = async client.multi()
+        var replies = await client.multi()
         .HGET('bo:free', number+':title')
         .HGET('bo:free', number+':content')
         .HGET('bo:free', number+':writer')
