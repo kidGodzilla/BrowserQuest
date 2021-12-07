@@ -11,6 +11,11 @@ var client;
 module.exports = DatabaseHandler = cls.Class.extend({
     init: async function(config) {
         console.log('redis config', config);
+
+        if (process.env.HEROKU_REDIS_PORT) config.redis_port = process.env.HEROKU_REDIS_PORT
+        if (process.env.HEROKU_REDIS_HOST) config.redis_host = process.env.HEROKU_REDIS_HOST
+        if (process.env.HEROKU_REDIS_PASSWORD) config.redis_password = process.env.HEROKU_REDIS_PASSWORD
+
         client = redis.createClient({ socket: { port: config.redis_port, host: config.redis_host, nodelay: true }, password: config.redis_password });
         await client.connect();
         this.client = client;
