@@ -10,7 +10,7 @@ var client;
 
 module.exports = DatabaseHandler = cls.Class.extend({
     init: async function(config) {
-        // console.log('redis config', config);
+        console.log('redis config', config);
         client = redis.createClient({ socket: { port: config.redis_port, host: config.redis_host, nodelay: true }, password: config.redis_password });
         await client.connect();
         this.client = client;
