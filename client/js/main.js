@@ -4,7 +4,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
 
     var initApp = function() {
         $(document).ready(function() {
-            app = new App();
+            app = window.app = new App();
             app.center();
 
             if(Detect.isWindows()) {
@@ -204,7 +204,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
                 foreground = document.getElementById("foreground"),
                 input = document.getElementById("chatinput");
 
-            game = new Game(app);
+            game = window.game = new Game(app);
             game.setup('#bubbles', canvas, background, foreground, input);
             game.setStorage(app.storage);
             app.setGame(game);
@@ -220,7 +220,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
             });
 
             game.onDisconnect(function(message) {
-                $('#death').find('p').html(message+"<em>Please reload the page.</em>");
+                $('#death').find('p').html(message+"<em>Please <a href=''>reload the page</a>.</em>");
                 $('#respawn').hide();
             });
 
