@@ -2,18 +2,21 @@
 define(['jquery', 'animation', 'sprites'], function($, Animation, sprites) {
 
     var Sprite = Class.extend({
-        init: function(name, scale) {
+        init: function(name, scale, json) {
+            if (typeof json !== 'object') json = null;
+
             this.name = name;
             this.scale = scale;
             this.isLoaded = false;
             this.offsetX = 0;
             this.offsetY = 0;
-            this.loadJSON(sprites[name]);
+            this.loadJSON(json || sprites[name]);
         },
 
         loadJSON: function(data) {
             this.id = data.id;
-            this.filepath = data[`filepath_${ this.scale }`] || "img/" + this.scale + "/" + this.id + ".png";
+            this.img_id = data.img_id || this.id;
+            this.filepath = data[`filepath_${ this.scale }`] || "img/" + this.scale + "/" + this.img_id + ".png";
             this.animationData = data.animations;
             this.width = data.width;
             this.height = data.height;

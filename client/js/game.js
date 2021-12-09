@@ -332,13 +332,14 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             return found;
         },
 
-        loadSprite: function(name) {
-            if(this.renderer.upscaledRendering) {
-                this.spritesets[0][name] = new Sprite(name, 1);
+        loadSprite: function(name, json) {
+            // console.log('loadSprite', name, json);
+            if (this.renderer.upscaledRendering) {
+                this.spritesets[0][name] = new Sprite(name, 1, json);
             } else {
-                this.spritesets[1][name] = new Sprite(name, 2);
-                if(!this.renderer.mobile && !this.renderer.tablet) {
-                    this.spritesets[2][name] = new Sprite(name, 3);
+                this.spritesets[1][name] = new Sprite(name, 2, json);
+                if (!this.renderer.mobile && !this.renderer.tablet) {
+                    this.spritesets[2][name] = new Sprite(name, 3, json);
                 }
             }
         },
