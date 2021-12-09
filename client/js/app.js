@@ -26,6 +26,7 @@ define(['jquery', 'storage'], function($, Storage) {
                         this.frontPage = 'loadcharacter';
                         $('#parchment').addClass('loadcharacter').removeClass('loading');
                         $('#loading').css('display', 'none');
+                        this.initFormFields();
                     }
                 }, 111);
 
@@ -33,6 +34,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 this.frontPage = 'createcharacter';
                 $('#parchment').addClass('createcharacter').removeClass('loading');
                 $('#loading').css('display', 'none');
+                this.initFormFields();
             }
         },
 
