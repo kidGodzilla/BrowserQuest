@@ -97,7 +97,7 @@ define(['jquery', 'app', 'entrypoint'], function($, App, EntryPoint) {
             });
 
             $('#create-new span').click(function() {
-                app.animateParchment('loadcharacter', 'confirmation');
+                app.animateParchment('loadcharacter', 'createcharacter');
             });
 
             $('#continue span').click(function() {
