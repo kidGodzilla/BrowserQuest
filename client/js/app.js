@@ -28,7 +28,7 @@ define(['jquery', 'storage'], function($, Storage) {
                         $('#loading').css('display', 'none');
                         this.initFormFields();
                     }
-                }, 111);
+                }, 250);
 
             } else {
                 this.frontPage = 'createcharacter';
