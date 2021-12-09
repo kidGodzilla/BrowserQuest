@@ -960,6 +960,9 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
 
                     if(!self.player.hasTarget() && self.map.isDoor(x, y)) {
                         var dest = self.map.getDoorDestination(x, y);
+                        // console.log('getDoorDestination', dest, (y * this.width) + x + 1);
+
+                        if (dest.redirect) location.href = dest.redirect;
 
                         self.player.setGridPosition(dest.x, dest.y);
                         self.player.nextGridX = dest.x;
@@ -996,7 +999,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                             self.renderer.clearScreen(self.renderer.context);
                         }
 
-                        if(dest.portal) {
+                        if (dest.portal) {
                             self.audioManager.playSound("teleport");
                         }
 
