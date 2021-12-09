@@ -230,8 +230,9 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
                 }
 
                 this.isSwitchingArmor = true;
-                self.setSprite(newArmorSprite);
+                if (!window._prevent_swap_armor_sprite) self.setSprite(newArmorSprite);
                 self.setSpriteName(newArmorSprite.id);
+
                 var blanking = setInterval(function() {
                     self.setVisible(toggle());
 

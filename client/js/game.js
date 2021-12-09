@@ -1546,7 +1546,7 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
 
                     if(player) {
                         if(Types.isArmor(itemKind)) {
-                            player.setSprite(self.sprites[itemName]);
+                            if (!window._prevent_swap_armor_sprite) player.setSprite(self.sprites[itemName]);
                         } else if(Types.isWeapon(itemKind)) {
                             player.setWeaponName(itemName);
                         }

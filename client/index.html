@@ -460,6 +460,9 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
         <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
         <script type="text/javascript">
+            // Prevents armor from being swapped
+            window._prevent_swap_armor_sprite = true;
+
             var ctx = document.querySelector('canvas').getContext('2d'),
                 parchment = document.getElementById("parchment");
 
