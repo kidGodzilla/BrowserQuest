@@ -24,11 +24,15 @@ define(['jquery', 'storage'], function($, Storage) {
                         return this.startGame('login', u, p, '');
                     } else {
                         this.frontPage = 'loadcharacter';
+                        $('#parchment').addClass('loadcharacter').removeClass('loading');
+                        $('#loading').css('display', 'none');
                     }
                 }, 111);
 
             } else {
                 this.frontPage = 'createcharacter';
+                $('#parchment').addClass('createcharacter').removeClass('loading');
+                $('#loading').css('display', 'none');
             }
         },
 
