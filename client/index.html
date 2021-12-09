@@ -82,6 +82,11 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
 	        <section id="parchment" class="createcharacter">
 	            <div class="parchment-left"></div>
 	            <div class="parchment-middle">
+
+                    <article id="loading">
+                        <h1>Loading..</h1>
+                    </article>
+
                     <article id="createcharacter">
           	           <h1>
           	               <span class="left-ornament"></span>
@@ -99,6 +104,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                          </div>
                          <div class="validation-summary"></div>
                     </article>
+
                     <article id="loadcharacter">
           	           <h1>
           	               <span class="left-ornament"></span>
@@ -118,6 +124,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                             <span class="link">New Character</span>
                          </div>
                     </article>
+
                     <article id="confirmation">
           	           <h1>
 <!--          	               <span class="left-ornament"></span>-->
@@ -474,7 +481,7 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                 document.querySelector('body').className += ' upscaled';
             }
 
-            parchment.className = "loadcharacter";
+            parchment.className = "loading";
         </script>
 
         <script src="js/lib/log.js"></script>

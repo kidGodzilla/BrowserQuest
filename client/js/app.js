@@ -9,10 +9,24 @@ define(['jquery', 'storage'], function($, Storage) {
             this.ready = false;
             this.storage = new Storage();
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
+            this.frontPage = 'loading';
             this.initFormFields();
 
-            if(localStorage && localStorage.data) {
-                this.frontPage = 'loadcharacter';
+            if (localStorage && localStorage.data) {
+                // this.frontPage = 'loading';
+                setTimeout(() => {
+                    var u = localStorage.getItem('_username');
+                    var p = localStorage.getItem('_password');
+
+                    console.log('trying to start game with', u, p);
+
+                    if (u && p) {
+                        return this.startGame('login', u, p, '');
+                    } else {
+                        this.frontPage = 'loadcharacter';
+                    }
+                }, 111);
+
             } else {
                 this.frontPage = 'createcharacter';
             }
@@ -29,6 +43,8 @@ define(['jquery', 'storage'], function($, Storage) {
 
         initFormFields: function() {
             var self = this;
+
+            if (this.frontPage === 'loading') return;
 
             // Play button
             this.$play = $('.play');
@@ -100,6 +116,13 @@ define(['jquery', 'storage'], function($, Storage) {
         startGame: function(action, username, userpw, email) {
             var self = this;
             self.firstTimePlaying = !self.storage.hasAlreadyPlayed();
+
+            if (username && userpw) {
+                try {
+                    localStorage.setItem('_username', username);
+                    localStorage.setItem('_password', userpw);
+                } catch(e){}
+            }
 
             if(username && !this.game.started) {
                 var optionsSet = false,

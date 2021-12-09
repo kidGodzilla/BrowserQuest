@@ -361,7 +361,7 @@ footer, header, hgroup, menu, nav, section {
     #mask, #logo, #parchment {opacity:0;}
     .intro #logo, .intro #parchment {opacity:1;}
 
-    .game #confirmation, .game #loadcharacter, .game #createcharacter, .game #error {display:none;}
+    .game #confirmation, .game #loadcharacter, .game #createcharacter, .game #error, .game #loading {display:none;}
 
     .game #parchment {z-index:0;-moz-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-webkit-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-o-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;-ms-transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;transition:0.5s opacity linear 0.5s, 0s z-index linear 1s;top:50%;}
     .game #credits, .game #death, .game #about {opacity:0;-moz-transition:0s opacity linear 0s;-webkit-transition:0s opacity linear 0s;-o-transition:0s opacity linear 0s;-ms-transition:0s opacity linear 0s;transition:0s opacity linear 0s;}
