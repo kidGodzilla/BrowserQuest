@@ -343,10 +343,89 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                     </div>
                 </div>
 		    </div>
-		</div>
-		<footer>
-		    <div id="sharing" class="clickable">
-		      Share this on
+
+            <!-- World Map-->
+<!--            <style>-->
+<!--                #mini_map {-->
+<!--                    /*pointer-events: none;*/-->
+<!--                    height: 160px;-->
+<!--                    width: 160px;-->
+
+<!--                    position: absolute;-->
+<!--                    overflow: hidden;-->
+<!--                    z-index: 99999;-->
+<!--                    bottom: -18px;-->
+<!--                    left: 15px;-->
+
+<!--                    border: 5px solid #111;-->
+<!--                    border-radius: 5px;-->
+
+<!--                    transform-origin: 0 0;-->
+<!--                    transform: scale(0.6);-->
+<!--                    display: none;-->
+<!--                }-->
+<!--                #world_map {-->
+<!--                    /*width: calc(160px * 4);*/-->
+<!--                    /*height: calc(160px * 4);*/-->
+
+<!--                    /*border-radius: 100px;*/-->
+<!--                    position: absolute;-->
+<!--                    overflow: hidden;-->
+<!--                    left: 10px;-->
+<!--                    top: 10px;-->
+
+<!--                    /*border: 10px solid #999999;*/-->
+
+<!--                    /*transform-origin: 0 0;*/-->
+<!--                    /*transform: scale(0.75);*/-->
+
+<!--                    /*display: none;*/-->
+<!--                    z-index: 99999;-->
+
+<!--                    /*border: 3px solid #DBD8C4;*/-->
+<!--                    /*border-radius: 100px;*/-->
+<!--                    display: none;-->
+<!--                }-->
+<!--                #mini_map img, #world_map img {-->
+<!--                    position: relative;-->
+<!--                }-->
+<!--                #world_map::after {-->
+<!--                    position: absolute;-->
+<!--                    content: '';-->
+<!--                    top: 0;-->
+<!--                    left: 0;-->
+<!--                    right: 0;-->
+<!--                    bottom: 0;-->
+<!--                    box-shadow: 0 0 36px 50px #dbd8c4 inset;-->
+<!--                    border: 10px solid #dbd8c4;-->
+<!--                }-->
+<!--                #world_map span {-->
+<!--                    font-family: 'GraphicPixel';-->
+<!--                    color: #e3e3e3;-->
+<!--                    color: #000;-->
+
+<!--                    position: absolute;-->
+<!--                    left: calc(50% - 68px);-->
+<!--                    z-index: 99999;-->
+<!--                    /*background: #999;*/-->
+<!--                    /*padding: 3px 10px;*/-->
+<!--                    top: 0px;-->
+<!--                    /*border-radius: 4px;*/-->
+<!--                    font-size: 30px;-->
+<!--                }-->
+<!--            </style>-->
+<!--            <div id="mini_map">-->
+<!--                <img src="img/world_map.jpg">-->
+<!--            </div>-->
+<!--            <div id="world_map">-->
+<!--                <span>World Map</span>-->
+<!--                <img src="img/world_map.jpg">-->
+<!--            </div>-->
+            <!-- / End World Map-->
+        </div>
+        <footer>
+            <div id="sharing" class="clickable">
+                Share this on
               <a href="http://twitter.com/share?url=http%3A%2F%2Fbrowserquest.mozilla.org&amp;text=Mozilla%27s%20BrowserQuest%3A%20HTML5%20massively%20multiplayer%20adventure%20game%20%23demo%20%23websockets&amp;related=glecollinet:Creators%20of%20BrowserQuest%2Cwhatthefranck" class="twitter"></a>
               <a href="http://www.facebook.com/share.php?u=http://browserquest.mozilla.org/" class="facebook"></a>
 		    </div>
@@ -400,5 +479,42 @@ Mozilla presents an HTML5 mini-MMORPG by Little Workshop http://www.littleworksh
                 var require = { waitSeconds: 60 };
         </script>
         <script data-main="js/home" src="js/lib/require-jquery.js"></script>
+
+<!--        <script>-->
+<!--            $(document).ready(function () {-->
+<!--                $('#mini_map').bind('click', function(e) {-->
+<!--                    e.stopPropagation();-->
+<!--                    $('#world_map').show();-->
+<!--                    return false;-->
+<!--                });-->
+<!--                $('#world_map').bind('click', function(e) {-->
+<!--                    e.stopPropagation();-->
+<!--                    $('#world_map').hide();-->
+<!--                    return false;-->
+<!--                });-->
+
+<!--                function renderMaps() {-->
+<!--                    let { gridX, gridY } = window.game.player;-->
+
+<!--                    let { clientWidth, clientHeight } = document.querySelector('#canvas');-->
+<!--                    document.querySelector('#world_map').style.height = clientHeight+'px';-->
+<!--                    document.querySelector('#world_map').style.width = clientWidth+'px';-->
+
+<!--                    if (gridX && gridY) {-->
+<!--                        // document.querySelector('#world_map img').style.display = 'inline-block';-->
+<!--                        var map_height = clientHeight;-->
+<!--                        var map_width = clientWidth;-->
+
+<!--                        document.querySelector('#world_map img').style.left = `calc((${ gridX } * -16px) + (${ map_width }px / 2))`;-->
+<!--                        document.querySelector('#world_map img').style.top = `calc((${ gridY } * -16px) + (${ map_height }px / 2))`;-->
+
+<!--                        document.querySelector('#mini_map img').style.left = `calc((${ gridX } * -16px) + (${ 160 }px / 2))`;-->
+<!--                        document.querySelector('#mini_map img').style.top = `calc((${ gridY } * -16px) + (${ 160 }px / 2))`;-->
+<!--                    }-->
+<!--                }-->
+<!--                setInterval(renderMaps, 2000);-->
+<!--                renderMaps();-->
+<!--            });-->
+<!--        </script>-->
 	</body>
 </html>
