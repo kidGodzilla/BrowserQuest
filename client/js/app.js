@@ -21,7 +21,12 @@ define(['jquery', 'storage'], function($, Storage) {
                     console.log('trying to start game with', u, p);
 
                     if (u && p) {
+                        setTimeout(() => {
+                            if (!game.started) this.startGame('login', u, p, '');
+                        }, 1000);
+
                         return this.startGame('login', u, p, '');
+
                     } else {
                         this.frontPage = 'loadcharacter';
                         $('#parchment').addClass('loadcharacter').removeClass('loading');
