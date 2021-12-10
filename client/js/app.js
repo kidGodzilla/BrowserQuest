@@ -11,35 +11,44 @@ define(['jquery', 'storage'], function($, Storage) {
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
             this.frontPage = 'loading';
             this.initFormFields();
+            var that = this;
+
+            function switchToScreenFromLoading(className) {
+                that.frontPage = className;
+                $('#parchment').addClass(className).removeClass('loading');
+                $('#loading').css('display', 'none');
+                that.initFormFields();
+            }
 
             if (localStorage && localStorage.data) {
                 // this.frontPage = 'loading';
                 setTimeout(() => {
                     var u = localStorage.getItem('_username');
                     var p = localStorage.getItem('_password');
-
-                    console.log('trying to start game with', u, p);
+                    // console.log('trying to start game from localStorage with', u, p);
 
                     if (u && p) {
-                        setTimeout(() => {
-                            if (!game.started) this.startGame('login', u, p, '');
-                        }, 1000);
+                        function tryStartingGameFromLocalStorage() {
+                            if (game.started) return;
 
-                        return this.startGame('login', u, p, '');
+                            that.startGame('login', u, p, '');
+
+                            if (performance.now() > 6000) {
+                                return switchToScreenFromLoading('loadcharacter');
+                            }
+
+                            setTimeout(tryStartingGameFromLocalStorage, 500);
+                        }
+
+                        tryStartingGameFromLocalStorage();
 
                     } else {
-                        this.frontPage = 'loadcharacter';
-                        $('#parchment').addClass('loadcharacter').removeClass('loading');
-                        $('#loading').css('display', 'none');
-                        this.initFormFields();
+                        switchToScreenFromLoading('loadcharacter');
                     }
                 }, 400);
 
             } else {
-                this.frontPage = 'createcharacter';
-                $('#parchment').addClass('createcharacter').removeClass('loading');
-                $('#loading').css('display', 'none');
-                this.initFormFields();
+                switchToScreenFromLoading('createcharacter');
             }
         },
 
