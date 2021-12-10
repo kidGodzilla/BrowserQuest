@@ -11,13 +11,13 @@ define(['jquery', 'storage'], function($, Storage) {
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
             this.frontPage = 'loading';
             this.initFormFields();
-            var that = this;
+            var self = this;
 
             function switchToScreenFromLoading(className) {
-                that.frontPage = className;
                 $('#parchment').addClass(className).removeClass('loading');
                 $('#loading').css('display', 'none');
-                that.initFormFields();
+                self.frontPage = className;
+                self.initFormFields();
             }
 
             if (localStorage && localStorage.data) {
@@ -28,9 +28,10 @@ define(['jquery', 'storage'], function($, Storage) {
 
                 if (u && p) {
                     function tryStartingGameFromLocalStorage() {
-                        if (window.game && game.started) return;
+                        if (self.game && self.game.started) return;
+                        if (!self.ready || !self.canStartGame()) return;
 
-                        that.startGame('login', u, p, '');
+                        self.startGame('login', u, p, '');
 
                         if (performance.now() > 6000) {
                             return switchToScreenFromLoading('loadcharacter');
