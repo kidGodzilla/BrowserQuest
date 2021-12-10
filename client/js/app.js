@@ -29,15 +29,16 @@ define(['jquery', 'storage'], function($, Storage) {
                 if (u && p) {
                     function tryStartingGameFromLocalStorage() {
                         if (self.game && self.game.started) return;
-                        if (!self.ready || !self.canStartGame()) return;
-
-                        self.startGame('login', u, p, '');
 
                         if (performance.now() > 6000) {
                             return switchToScreenFromLoading('loadcharacter');
                         }
 
-                        setTimeout(tryStartingGameFromLocalStorage, 300);
+                        if (!self.ready || !self.canStartGame()) {
+                            setTimeout(tryStartingGameFromLocalStorage, 300);
+                        } else {
+                            self.startGame('login', u, p, '');
+                        }
                     }
 
                     tryStartingGameFromLocalStorage();
