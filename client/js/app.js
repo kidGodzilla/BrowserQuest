@@ -3,6 +3,7 @@ define(['jquery', 'storage'], function($, Storage) {
 
     var App = Class.extend({
         init: function() {
+            var self = this;
             this.currentPage = 1;
             this.blinkInterval = null;
             this.isParchmentReady = true;
@@ -11,7 +12,6 @@ define(['jquery', 'storage'], function($, Storage) {
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
             this.frontPage = 'loading';
             this.initFormFields();
-            var self = this;
 
             function switchToScreenFromLoading(className) {
                 $('#parchment').addClass(className).removeClass('loading');
@@ -21,7 +21,6 @@ define(['jquery', 'storage'], function($, Storage) {
             }
 
             if (localStorage && localStorage.data) {
-                // this.frontPage = 'loading';
                 var u = localStorage.getItem('_username');
                 var p = localStorage.getItem('_password');
                 // console.log('trying to start game from localStorage with', u, p);
