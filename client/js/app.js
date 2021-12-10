@@ -22,30 +22,28 @@ define(['jquery', 'storage'], function($, Storage) {
 
             if (localStorage && localStorage.data) {
                 // this.frontPage = 'loading';
-                setTimeout(() => {
-                    var u = localStorage.getItem('_username');
-                    var p = localStorage.getItem('_password');
-                    // console.log('trying to start game from localStorage with', u, p);
+                var u = localStorage.getItem('_username');
+                var p = localStorage.getItem('_password');
+                // console.log('trying to start game from localStorage with', u, p);
 
-                    if (u && p) {
-                        function tryStartingGameFromLocalStorage() {
-                            if (game.started) return;
+                if (u && p) {
+                    function tryStartingGameFromLocalStorage() {
+                        if (window.game && game.started) return;
 
-                            that.startGame('login', u, p, '');
+                        that.startGame('login', u, p, '');
 
-                            if (performance.now() > 6000) {
-                                return switchToScreenFromLoading('loadcharacter');
-                            }
-
-                            setTimeout(tryStartingGameFromLocalStorage, 500);
+                        if (performance.now() > 6000) {
+                            return switchToScreenFromLoading('loadcharacter');
                         }
 
-                        tryStartingGameFromLocalStorage();
-
-                    } else {
-                        switchToScreenFromLoading('loadcharacter');
+                        setTimeout(tryStartingGameFromLocalStorage, 300);
                     }
-                }, 400);
+
+                    tryStartingGameFromLocalStorage();
+
+                } else {
+                    switchToScreenFromLoading('loadcharacter');
+                }
 
             } else {
                 switchToScreenFromLoading('createcharacter');
